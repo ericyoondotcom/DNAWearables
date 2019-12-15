@@ -1,6 +1,8 @@
 width = 20;
 height = 10;
 extrusion = height / 2;
+separation = 2;
+
 module drawPolygon(x, y, isRotated, vertices){
     if(isRotated){
         x = x * -1;
@@ -70,7 +72,30 @@ module drawC(x, y, isRotated) {
         }
     }
 };
-drawT(0, 0, false);
-drawA(1, 0, true);
-drawC(0, 1, false);
-drawG(1, 1, true);
+
+sequence = "GTCA";
+
+for(i = [0 : len(sequence)]){
+    base = sequence[i];
+    if(base == "A"){
+        complimentary = "T";
+        drawA(0, i, false);
+        drawT(separation, i, true);
+    }
+    if(base == "T"){
+        complimentary = "A";
+        drawT(0, i, false);
+        drawA(separation, i, true);
+    }
+    if(base == "C"){
+        complimentary = "G";
+        drawC(0, i, false);
+        drawG(separation, i, true);
+    }
+    if(base == "G"){
+        complimentary = "C";
+        drawG(0, i, false);
+        drawC(separation, i, true);
+    }
+    
+}
