@@ -1,14 +1,30 @@
 width = 20;
 height = 10;
 extrusion = height / 2;
-separation = 5;
+separation = 7;
 textHeightCoeff = .4;
-textXoffset = (width - extrusion) / 2;
+textXoffset = 5;
+
+//https://gist.github.com/Stemer114/7e420ea8ad9733c4e0ba
+module ring(
+        h=1,
+        od = 10,
+        id = 5,
+        de = 0.1
+        ) 
+{
+    difference() {
+        cylinder(h=h, r=od/2, $fn=20);
+        translate([0, 0, -de])
+            cylinder(h=h+2*de, r=id/2, $fn=20);
+    }
+}
+
 
 module drawLabel(x, y, isRotated, string){
     offsetY = (height * (1 - textHeightCoeff) / 2);
     translate([x + (isRotated ? (width*2) - textXoffset : textXoffset), y + offsetY, 2.5]){
-        text(string, height * textHeightCoeff, "Muli:style=Bold");
+        text(text=string, size=(height * textHeightCoeff), font="Muli:style=Bold", halign=(isRotated ? "right" : "left"));
     }
 }
 module drawPolygon(x, y, isRotated, vertices){
@@ -34,9 +50,9 @@ module drawA(x, y, isRotated) {
     vertices = [[0, 0], [0, height], [width, height], [width + extrusion, height / 2], [width, 0]];
     drawPolygon(x, y, isRotated, vertices);
 };
-module drawT(x, y, isRotated) {
+module drawT(x, y, isRotated, useRNAencoding = false) {
     y = y * height;
-    drawLabel(x, y, isRotated, "T");
+    drawLabel(x, y, isRotated, useRNAencoding ? "U" : "T");
     vertices = [[0, 0], [0, height], [width, height], [width - extrusion, height / 2], [width, 0]];
     drawPolygon(x, y, isRotated, vertices);
 };
@@ -85,29 +101,28 @@ module drawC(x, y, isRotated) {
     }
 };
 
-sequence = "A";
+rna = true;
+sequence = "AUG";
 
 for(i = [0 : len(sequence)]){
-    base = sequence[i];
+    base = sequence[len(sequence) - i - 1];
     if(base == "A"){
-        complimentary = "T";
         drawA(0, i, false);
-        drawT(separation, i, true);
+        drawT(separation, i, true, rna);
     }
-    if(base == "T"){
-        complimentary = "A";
-        drawT(0, i, false);
+    if(base == "T" || base == "U"){
+        drawT(0, i, false, base == "U");
         drawA(separation, i, true);
     }
     if(base == "C"){
-        complimentary = "G";
         drawC(0, i, false);
         drawG(separation, i, true);
     }
     if(base == "G"){
-        complimentary = "C";
         drawG(0, i, false);
         drawC(separation, i, true);
     }
     
 }
+translate([width / 2, (height * len(sequence)) + 1, 0]) ring(h=3, id=2, od=3, de=.01);
+translate([(width / 2) + separation + width, (height * len(sequence)) + 1, 0]) ring(h=3, id=2, od=3, de=.01);
