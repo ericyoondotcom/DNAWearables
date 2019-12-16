@@ -4,6 +4,8 @@ extrusion = height / 2;
 separation = 7;
 textHeightCoeff = .4;
 textXoffset = 5;
+radiusFudge = 0.01;
+
 
 //https://gist.github.com/Stemer114/7e420ea8ad9733c4e0ba
 module ring(
@@ -23,8 +25,10 @@ module ring(
 
 module drawLabel(x, y, isRotated, string){
     offsetY = (height * (1 - textHeightCoeff) / 2);
-    translate([x + (isRotated ? (width*2) - textXoffset : textXoffset), y + offsetY, 2.5]){
-        text(text=string, size=(height * textHeightCoeff), font="Muli:style=Bold", halign=(isRotated ? "right" : "left"));
+    linear_extrude(3){
+        translate([x + (isRotated ? (width*2) - textXoffset : textXoffset), y + offsetY]){
+            text(text=string, size=(height * textHeightCoeff), font="Muli:style=Bold", halign=(isRotated ? "right" : "left"));
+        }
     }
 }
 module drawPolygon(x, y, isRotated, vertices){
@@ -81,7 +85,7 @@ module drawG(x, y, isRotated) {
 
 module C(vertices) difference(){
     polygon(vertices);
-    translate([width, height / 2, 0]) circle(height / 2, $fn = 100);
+    translate([width, height / 2, 0]) circle((height / 2) + radiusFudge, $fn = 100);
 }
 
 module drawC(x, y, isRotated) {
@@ -124,5 +128,6 @@ for(i = [0 : len(sequence)]){
     }
     
 }
-translate([width / 2, (height * len(sequence)) + 1, 0]) ring(h=3, id=2, od=3, de=.01);
-translate([(width / 2) + separation + width, (height * len(sequence)) + 1, 0]) ring(h=3, id=2, od=3, de=.01);
+
+translate([width / 2, (height * len(sequence)) + 1, 1.5]) rotate([0, 90, 0]) ring(h=3, id=2, od=3, de=.01);
+translate([(width / 2) + separation + width, (height * len(sequence)) + 1, 1.5]) rotate([0, 90, 0]) ring(h=3, id=2, od=3, de=.01);
