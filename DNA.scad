@@ -1,3 +1,10 @@
+//SCALING INFO
+//SHOULD BE 20.58mm PER BASE
+//EXPORTS 10.625 PER BASE
+//SO SCALE 193%
+//BUT IN PRACTICE 150% IS GOOD
+
+
 width = 20;
 height = 10;
 extrusion = height / 2;
@@ -105,8 +112,8 @@ module drawC(x, y, isRotated) {
     }
 };
 
-rna = true;
-sequence = "AUG";
+rna = false;
+sequence = "TATA";
 
 for(i = [0 : len(sequence)]){
     base = sequence[len(sequence) - i - 1];
@@ -129,5 +136,5 @@ for(i = [0 : len(sequence)]){
     
 }
 
-translate([width / 2, (height * len(sequence)) + 1, 1.5]) rotate([0, 90, 0]) ring(h=3, id=2, od=3, de=.01);
-translate([(width / 2) + separation + width, (height * len(sequence)) + 1, 1.5]) rotate([0, 90, 0]) ring(h=3, id=2, od=3, de=.01);
+translate([width / 2, (height * len(sequence)) + 1, 1.5]) rotate([0, 90, 0]) ring(h=2, id=2, od=3, de=.01);
+translate([(width / 2) + separation + width, (height * len(sequence)) + 1, 1.5]) rotate([0, 90, 0]) ring(h=2, id=2, od=3, de=.01);
